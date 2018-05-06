@@ -1,0 +1,20 @@
+{
+    "name": "ChartGraph",
+    "description": "Chart Graph",
+    "keywords": "ILI9341",
+    "authors": [
+        {
+            "name": "Men-Shen Tsai",
+            "email": "menshen.tsai@gmail.com",
+            "url": "http://localhost",
+            "maintainer": false
+        }
+    ],
+    "repository": {
+    },
+    "version": "0.1",
+    "platforms": "*",
+    "examples": [
+        "Examples/*/*.ino"
+    ]	
+}

@@ -1,0 +1,24 @@
+#######################################
+# Syntax Coloring Map For ChartGraph
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+ChartGraph	KEYWORD1
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin				KEYWORD2
+UpdateGraph			KEYWORD2
+BackgroundColor		KEYWORD2
+setUnit				KEYWORD2
+addData				KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
