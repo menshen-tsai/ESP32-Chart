@@ -3,37 +3,27 @@
 //
 // https://github.com/G6EJD/ESP8266-TN004.git
 
-////#include <XPT2046_Touchscreen.h>
+
 #include <SPI.h>
 #include "Adafruit_GFX.h"
 #include "Adafruit_ILI9341.h"
-#include "TouchControllerWS.h"
-#include "FS.h"
-#include "SPIFFS.h"
 #include "ChartGraph.h"
-
-
 #include <WiFi.h>
 #include <Ticker.h>
 #include <Time.h>
 #include <MQTT.h>
 #include "config.h"
 
-// Config.h defines the SSID and PASS
-// const char* WIFI_SSID  = "SSID";
-// const char* WIFI_PASS  = "PASS";
-
-#define ONBOARDLED 2 // Built in LED on ESP-12/ESP-07
+#define ONBOARDLED 2 // Built in LED on ESP32-T
 #define _cs   22  // goes to TFT CS
 #define _dc   17  // goes to TFT DC
 #define _mosi 23  // goes to TFT MOSI
 #define _sclk 18  // goes to TFT SCK/CLK
-#define _rst  16   // goes to TFT RESET
-#define _miso  19   // Not connected
+#define _rst  16  // goes to TFT RESET
+#define _miso  19 // goes to TFT MISO, Not connected
 
 
 #define BACKGROUND  ILI9341_BLUE
-
 #define autoscale_on  true
 #define autoscale_off false
 #define barchart_on   true
@@ -89,7 +79,7 @@ void connect() {
   }
   Serial.print("\nWifi Connected, ");
   Serial.print("connecting to MQTT Broker ...");
-  while (!mqttClient.connect("192.168.0.195", "try0", "try0")) {
+  while (!mqttClient.connect(MQTT_BROKER, "try0", "try0")) {
     Serial.print(".");
     delay(1000);
   }
@@ -109,11 +99,10 @@ void messageReceived(String &topic, String &payload) {
 
  
 void setup() {
-  long lastTouched;
-  bool calibrating = true;
   time_t t0;
   char buf[30], ipBuf[22];
-  char unit[UNIT_LEN];
+  char unit[] = {char(247), 'C', 0};
+
   uint8_t count = 30;
     
   Serial.begin(115200);
@@ -155,14 +144,22 @@ void setup() {
 
   configTzTime(TZ_INFO, NTP_SERVER);
   time(&t0);
-  Serial.printf("Current Time: %ld\n", t0);
-
+  Serial.printf("Connecting to NTP server  ");
+  count = 30;
+  while((t0 < 1000) && (count >0)) {
+    count--;
+    time(&t0);
+    Serial.print(":");
+    delay(500);
+  }
+  if (count >0) {
+    Serial.println(ctime(&t0));
+  } else {
+    Serial.println("\nNTP Server connection failed");
+  }
   tft.setTextColor(ILI9341_WHITE, BACKGROUND);
   chart1.BackgroundColor(BACKGROUND) ;
   chart2.BackgroundColor(BACKGROUND) ; 
-  unit[0] = char(247);
-  unit[1] = 'C';
-  unit[2] = 0;
   chart1.setUnit(unit);
   chart2.setUnit("%");
   chart1.begin();
