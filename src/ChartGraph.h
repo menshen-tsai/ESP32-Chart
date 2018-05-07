@@ -9,7 +9,7 @@
 #define xticks      5                // 5 x-axis division markers
 #define yticks      5                // 5 y-axis division markers
 #define xGraphOffset  100
-#define UNIT_LEN      10
+
 
 struct DataPoint {
   float    data;
