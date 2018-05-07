@@ -48,6 +48,9 @@ void ChartGraph::UpdateGraph() {
   int x1,y1,x2,y2;
   int ind;
   char buf[10];
+  int hh, mm, ss;
+  time_t t0;
+  struct tm *timeInfo;
 
   _tft->setTextColor(ILI9341_YELLOW, _backgroundColor);
   _tft->setTextSize(2);
@@ -94,19 +97,19 @@ void ChartGraph::UpdateGraph() {
 ////    y2 = _yPos + _height - constrain(_Data[ind].data,0,_y1Max) * _height / _y1Max + 1;
     y2 = _yPos + _height - (constrain(_Data[ind].data,_y1Min,_y1Max) - _y1Min) * _height / (_y1Max-_y1Min) + 1;
     if (_barchartMode) {
-      if (Old_x2[gx] != 0 && Old_y2[gx] != 0)
-        _tft->drawLine(x1,y1,Old_x2[gx],Old_y2[gx],ILI9341_BLACK);
+      if (_Old_x2[gx] != 0 && _Old_y2[gx] != 0)
+        _tft->drawLine(x1,y1,_Old_x2[gx],_Old_y2[gx],ILI9341_BLACK);
       _tft->drawLine(x1,y1,x2,y2,_graphColor);
     } else {
-      if (Old_x2[gx] != 0 && Old_y2[gx] != 0) {
-        _tft->drawPixel(Old_x2[gx],Old_y2[gx],ILI9341_BLACK);
-        _tft->drawPixel(Old_x2[gx],Old_y2[gx]-1,ILI9341_BLACK); // Make the line a double pixel height to emphasise it, -1 makes the graph data go up!
+      if (_Old_x2[gx] != 0 && _Old_y2[gx] != 0) {
+        _tft->drawPixel(_Old_x2[gx],_Old_y2[gx],ILI9341_BLACK);
+        _tft->drawPixel(_Old_x2[gx],_Old_y2[gx]-1,ILI9341_BLACK); // Make the line a double pixel height to emphasise it, -1 makes the graph data go up!
       }
       _tft->drawPixel(x2,y2,_graphColor);
       _tft->drawPixel(x2,y2-1,_graphColor); // Make the line a double pixel height to emphasise it, -1 makes the graph data go up!
     }
-    Old_x2[gx] = x2;
-    Old_y2[gx] = y2;    
+    _Old_x2[gx] = x2;
+    _Old_y2[gx] = y2;    
   }
 
   //Draw the X-axis scale
@@ -126,18 +129,15 @@ void ChartGraph::UpdateGraph() {
         _tft->setCursor((_xPos+xGraphOffset+_width/xticks*spacing)-18,_yPos+_height+5);
       }
 
-    int x_value = (ind + spacing*(max_readings/xticks)) % max_readings;
-    int hh, mm, ss;
-    time_t t0;
-    struct tm *timeInfo;
+      int x_value = (ind + spacing*(max_readings/xticks)) % max_readings;
       
-    t0 = _Data[x_value].timeStamp;
-    timeInfo = localtime(&t0);
-    ss = timeInfo->tm_sec;  //(_Data[x_value].ts/1000);
-    mm = timeInfo->tm_min;    //ss / 60;
-    hh = timeInfo->tm_hour;   //mm / 60;
-    sprintf(buf, "%2d:%02d:%02d", hh, mm, ss);
-    _tft->print(buf);
+      t0 = _Data[x_value].timeStamp;
+      timeInfo = localtime(&t0);
+      ss = timeInfo->tm_sec;  //(_Data[x_value].ts/1000);
+      mm = timeInfo->tm_min;    //ss / 60;
+      hh = timeInfo->tm_hour;   //mm / 60;
+      sprintf(buf, "%2d:%02d:%02d", hh, mm, ss);
+      _tft->print(buf);
     }
   }
   
